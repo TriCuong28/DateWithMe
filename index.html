@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Will You Go Out With Me? 💖</title>
+  <meta name="description" content="A cute romantic interactive invitation just for you!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@600;700;800&family=Dancing+Script:wght@700&family=Nunito:wght@600;700;800;900&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <!-- Canvas Confetti, html2canvas & QRCode -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body>
+  <!-- Ambient floating particles background -->
+  <div class="ambient-bg" id="ambientBg"></div>
+
+  <!-- Music toggle button -->
+  <button class="music-toggle-btn" id="musicToggleBtn" title="Bật/Tắt giai điệu ngọt ngào" aria-label="Music toggle">
+    <span class="music-icon" id="musicIcon">🎵</span>
+    <span class="music-text">Melody</span>
+  </button>
+
+  <main class="app-container">
+    <!-- STAGE 1: THE PROPOSAL -->
+    <section class="card proposal-card active" id="proposalSection">
+      <div class="card-inner">
+        <!-- Floating badge -->
+        <div class="badge-tag">
+          <span>💌 A special letter for <strong id="crushName">you</strong> 💖</span>
+        </div>
+
+        <!-- Cute Chibi Character -->
+        <div class="sticker-wrapper" id="stickerWrapper">
+          <img src="assets/asking.jpg" alt="Cute couple chibi sticker" class="chibi-img asking" id="mainSticker">
+          <div class="floating-heart heart-1">💖</div>
+          <div class="floating-heart heart-2">✨</div>
+          <div class="floating-heart heart-3">🌸</div>
+        </div>
+
+        <!-- Main Title -->
+        <h1 class="proposal-title" id="proposalTitle">
+          Will you go out with me? <span class="heart-pulse">🥺👉👈</span>
+        </h1>
+        <p class="proposal-subtitle" id="proposalSubtitle">
+          Say yes and make my day! ✨💖
+        </p>
+
+        <!-- Action Buttons Area -->
+        <div class="actions-zone" id="actionsZone">
+          <!-- The YES button -->
+          <button type="button" class="btn btn-yes" id="yesBtn">
+            <span class="btn-icon">🥰</span>
+            <span class="btn-text">YES! 💖</span>
+            <span class="sparkle-glow"></span>
+          </button>
+
+          <!-- The elusive THINK AGAIN button inside anchor placeholder -->
+          <div class="dodge-anchor" id="dodgeAnchor">
+            <button type="button" class="btn btn-dodge" id="dodgeBtn">
+              <span class="btn-icon">😜</span>
+              <span class="btn-text" id="dodgeBtnText">Think again!</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STAGE 2: DATE PLANNER (Revealed after clicking YES) -->
+    <section class="card planner-card hidden" id="plannerSection">
+      <div class="card-inner">
+        <!-- Celebration Header -->
+        <div class="celebration-header">
+          <div class="sticker-wrapper celebrate">
+            <img src="assets/happy.jpg" alt="Joyful chibi couple hugging" class="chibi-img happy">
+          </div>
+          <div class="badge-tag success">
+            <span>🎉 YAYYY! She said YES! 💖</span>
+          </div>
+          <h2 class="planner-title">Hẹn hò cùng nhau nha! 🥰</h2>
+          <p class="planner-subtitle">Bây giờ tới lượt em chọn nè, muốn anh dắt em đi đâu nàoo?</p>
+        </div>
+
+        <!-- Step 1: Destination -->
+        <div class="planner-step">
+          <div class="step-label">
+            <span class="step-num">1</span>
+            <h3>Địa điểm em thích đi nhất? 📍</h3>
+          </div>
+          <p class="step-desc">Em có thể chọn một hoặc nhiều địa điểm luôn nha!</p>
+
+          <div class="options-grid" id="placesGrid">
+            <label class="option-card" data-val="coffee">
+              <input type="checkbox" name="place" value="Quán cà phê chill ngắm phố">
+              <span class="option-check">💖</span>
+              <span class="option-emoji">☕</span>
+              <span class="option-name">Cà phê chill</span>
+              <span class="option-desc">Ngắm phố & chụp ảnh xinh</span>
+            </label>
+
+            <label class="option-card" data-val="movie">
+              <input type="checkbox" name="place" value="Rạp chiếu phim lãng mạn">
+              <span class="option-check">💖</span>
+              <span class="option-emoji">🎬</span>
+              <span class="option-name">Xem phim</span>
+              <span class="option-desc">Bắp rang bơ & phim hay</span>
+            </label>
+
+            <label class="option-card" data-val="dinner">
+              <input type="checkbox" name="place" value="Đi ăn đồ nướng / lẩu siêu ngon">
+              <span class="option-check">💖</span>
+              <span class="option-emoji">🍲</span>
+              <span class="option-name">Ăn lẩu / Đồ nướng</span>
+              <span class="option-desc">Ấm bụng thơm nức tâm sự</span>
+            </label>
+
+            <label class="option-card" data-val="arcade">
+              <input type="checkbox" name="place" value="Khu vui chơi / Gắp gấu bông & Bowling">
+              <span class="option-check">💖</span>
+              <span class="option-emoji">🎡</span>
+              <span class="option-name">Gắp gấu & Arcade</span>
+              <span class="option-desc">Gắp gấu bông tặng bé</span>
+            </label>
+
+            <label class="option-card" data-val="walk">
+              <input type="checkbox" name="place" value="Dạo phố hóng gió & ngắm hoàng hôn">
+              <span class="option-check">💖</span>
+              <span class="option-emoji">🚶‍♀️</span>
+              <span class="option-name">Dạo phố hóng gió</span>
+              <span class="option-desc">Ngắm hoàng hôn & chuyện trò</span>
+            </label>
+
+            <label class="option-card" data-val="custom">
+              <input type="checkbox" name="place" value="Tùy em chọn địa điểm bí mật" id="customPlaceCheck">
+              <span class="option-check">💖</span>
+              <span class="option-emoji">✨</span>
+              <span class="option-name">Địa điểm bí mật</span>
+              <span class="option-desc">Nơi nào em thích là được</span>
+            </label>
+          </div>
+
+          <!-- Custom place input if selected -->
+          <div class="custom-input-box hidden" id="customPlaceBox">
+            <input type="text" id="customPlaceInput" placeholder="Nhập địa điểm em muốn đi nè... 🌸" maxlength="50">
+          </div>
+        </div>
+
+        <!-- Step 2: What to Eat / Drink (Bonus Sweet Treats) -->
+        <div class="planner-step">
+          <div class="step-label">
+            <span class="step-num">2</span>
+            <h3>Món tráng miệng kèm theo? 🧋</h3>
+          </div>
+          <div class="chips-container" id="treatsContainer">
+            <button type="button" class="chip-item" data-treat="Trà sữa full topping 🧋">🧋 Trà sữa full topping</button>
+            <button type="button" class="chip-item" data-treat="Kem ốc quế mát lạnh 🍦">🍦 Kem ốc quế mát lạnh</button>
+            <button type="button" class="chip-item" data-treat="Bánh ngọt xinh xắn 🍰">🍰 Bánh ngọt</button>
+            <button type="button" class="chip-item" data-treat="Bánh tráng nướng / Ăn vặt 🍢">🍢 Ăn vặt lề đường</button>
+            <button type="button" class="chip-item" data-treat="Nước ép hoa quả healthy 🍹">🍹 Nước ép tươi</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Date & Time -->
+        <div class="planner-step">
+          <div class="step-label">
+            <span class="step-num">3</span>
+            <h3>Thời gian nào em rảnh nè? ⏰</h3>
+          </div>
+          
+          <!-- Current date indicator -->
+          <div class="current-realtime-badge">
+            <span class="live-dot"></span>
+            <span>Thời gian hôm nay: <strong id="todayRealtimeText">Đang tải...</strong></span>
+          </div>
+
+          <div class="time-presets" id="timePresets">
+            <button type="button" class="preset-btn active" id="presetSat">🌙 Tối Thứ Bảy</button>
+            <button type="button" class="preset-btn" id="presetSun">☀️ Chủ Nhật</button>
+            <button type="button" class="preset-btn" id="presetTmr">✨ Tối mai luôn</button>
+            <button type="button" class="preset-btn" id="presetToday">💖 Tối nay luôn</button>
+            <button type="button" class="preset-btn" id="presetSomeday">💌 Hôm nào em rảnh</button>
+          </div>
+
+          <div class="specific-date-row">
+            <label for="customDatePicker">Hoặc chọn ngày (dd/MM/yyyy):</label>
+            <input type="date" id="customDatePicker" class="custom-date-picker">
+          </div>
+
+          <div class="specific-time-row">
+            <label for="customTimePicker">Giờ hẹn mong muốn:</label>
+            <input type="time" id="customTimePicker" value="19:00" class="custom-time-picker">
+          </div>
+
+          <div class="date-format-hint" id="selectedDateDisplay">
+            <span>📅 Lịch hẹn của tụi mình: <strong id="formattedDateText">Chưa chọn</strong></span>
+          </div>
+        </div>
+
+        <!-- Step 4: Pick up option -->
+        <div class="planner-step">
+          <div class="step-label">
+            <span class="step-num">4</span>
+            <h3>Vận chuyển & Lời nhắn 🛵</h3>
+          </div>
+          <div class="pickup-choices">
+            <label class="radio-label">
+              <input type="radio" name="pickup" value="Qua nhà đón em nha" checked>
+              <span>🛵 Anh chạy qua đón em nha!</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="pickup" value="Mình gặp nhau tại quán nhé">
+              <span>📍 Mình gặp nhau ở điểm hẹn nè</span>
+            </label>
+          </div>
+          <div class="custom-note-wrap">
+            <textarea id="customNote" rows="2" placeholder="Lời nhắn gửi thêm cho anh (ví dụ: đón em lúc 19h nha, nhớ mang áo ấm... 🥰)"></textarea>
+          </div>
+        </div>
+
+        <!-- Generate Ticket Button -->
+        <div class="confirm-action-box">
+          <button type="button" class="btn btn-confirm" id="generateTicketBtn">
+            <span>🎟️ Xuất "Tấm Vé Hẹn Hò" Ngay! 💖</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STAGE 3: OFFICIAL DATE TICKET (Final Pass) -->
+    <section class="card ticket-card hidden" id="ticketSection">
+      <div class="card-inner">
+        <div class="badge-tag success">
+          <span>✨ TẤM VÉ HẸN HÒ ĐÃ ĐƯỢC KÍ DUYỆT ✨</span>
+        </div>
+
+        <!-- Realistic Date Pass Ticket Design -->
+        <div class="date-ticket" id="dateTicket">
+          <div class="ticket-header">
+            <div class="ticket-brand">
+              <span class="brand-heart">💖</span>
+              <span class="brand-text">OFFICIAL DATE PASS</span>
+            </div>
+            <div class="ticket-pass-id" id="ticketId">#LOVE-2026-YES</div>
+          </div>
+
+          <div class="ticket-body">
+            <div class="ticket-row">
+              <span class="ticket-label">DÀNH CHO:</span>
+              <span class="ticket-val crush-val" id="ticketCrush">Em bé xinh đẹp 💕</span>
+            </div>
+            <div class="ticket-row">
+              <span class="ticket-label">NGƯỜI MỜI:</span>
+              <span class="ticket-val" id="ticketSender">Anh đẹp trai 🦸‍♂️</span>
+            </div>
+            <div class="ticket-divider"></div>
+            <div class="ticket-row">
+              <span class="ticket-label">ĐỊA ĐIỂM:</span>
+              <span class="ticket-val highlight" id="ticketPlace">Quán cà phê chill</span>
+            </div>
+            <div class="ticket-row">
+              <span class="ticket-label">MÓN NGỌT:</span>
+              <span class="ticket-val" id="ticketTreat">Trà sữa full topping 🧋</span>
+            </div>
+            <div class="ticket-row">
+              <span class="ticket-label">THỜI GIAN:</span>
+              <span class="ticket-val highlight" id="ticketTime">Tối Thứ Bảy (17/10/2026) lúc 19:00</span>
+            </div>
+            <div class="ticket-row">
+              <span class="ticket-label">XUẤT VÉ LÚC:</span>
+              <span class="ticket-val" id="ticketIssueTime" style="font-size: 0.82rem; color: #8c5367;">--/--/---- --:--</span>
+            </div>
+            <div class="ticket-row">
+              <span class="ticket-label">HÌNH THỨC:</span>
+              <span class="ticket-val" id="ticketPickup">Anh qua đón em 🛵</span>
+            </div>
+            <div class="ticket-row" id="ticketNoteRow">
+              <span class="ticket-label">LỜI NHẮN:</span>
+              <span class="ticket-val note-val" id="ticketNote">"Nhớ mặc đẹp nha!"</span>
+            </div>
+          </div>
+
+          <div class="ticket-footer">
+            <div class="ticket-footer-main">
+              <!-- Real scannable QR Code -->
+              <div class="qr-wrapper">
+                <div id="ticketQrcode" class="ticket-qrcode"></div>
+                <span class="qr-caption">QUÉT MÃ VÉ 📲</span>
+              </div>
+
+              <!-- Approved Stamp safely in footer without covering rows! -->
+              <div class="stamp-approved">
+                <span>APPROVED</span>
+                <span class="stamp-sub">100% WITH LOVE 💖</span>
+              </div>
+            </div>
+            <p class="ticket-terms">Vé có giá trị hạnh phúc vô thời hạn • Đổi lại một nụ cười thật tươi 🥰</p>
+          </div>
+        </div>
+
+        <!-- Clean Action Buttons Area -->
+        <div class="ticket-actions">
+          <button type="button" class="btn btn-download" id="downloadTicketBtn">
+            <span>📸 Lưu ảnh tấm vé này về máy</span>
+          </button>
+
+          <button type="button" class="btn-replay" id="replayConfettiBtn">
+            <span>🎉 Bắn lại pháo hoa ăn mừng</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Sweet Toast Notification -->
+  <div class="sweet-toast" id="sweetToast">
+    <span class="toast-icon">💌</span>
+    <span class="toast-msg" id="toastMsg">Đã lưu ảnh tấm vé thành công! 💖</span>
+  </div>
+
+  <footer class="app-footer">
+    <p>Made with all my heart for you 💖</p>
+  </footer>
+
+  <script src="app.js?v=4"></script>
+</body>
+</html>
