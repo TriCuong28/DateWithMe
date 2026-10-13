@@ -723,8 +723,8 @@
     const host = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? '192.168.1.91'
       : window.location.hostname;
-    const port = window.location.port ? `:${window.location.port}` : '';
-    const webTicketUrl = `${window.location.protocol}//${host}${port}/?pass=${encodeURIComponent(cleanId)}`;
+    const path = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+    const webTicketUrl = `${window.location.protocol}//${host}${port}${path}?pass=${encodeURIComponent(cleanId)}`;
 
     // Concise romantic Date Pass Ticket text (compact for large chunky QR blocks & 0.05s instant scan!)
     const cleanPlace = places.length > 42 ? places.substring(0, 39) + '...' : places;
