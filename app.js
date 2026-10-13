@@ -756,8 +756,8 @@
         const tempDiv = document.createElement('div');
         new QRCode(tempDiv, {
           text: qrContent,
-          width: 120,
-          height: 120,
+          width: 156,
+          height: 156,
           colorDark: '#000000',
           colorLight: '#ffffff',
           correctLevel: QRCode.CorrectLevel.L
@@ -768,11 +768,11 @@
         img.alt = 'Mã QR vé hẹn hò';
         img.src = canvas ? canvas.toDataURL('image/png') : (tempDiv.querySelector('img')?.src || '');
         img.className = 'qr-clean-img';
-        img.style.width = '120px';
-        img.style.height = '120px';
+        img.style.width = '156px';
+        img.style.height = '156px';
         img.style.display = 'block';
         img.style.margin = 'auto';
-        img.style.borderRadius = '8px';
+        img.style.borderRadius = '12px';
 
         qrContainer.appendChild(img);
       } else {
@@ -780,14 +780,14 @@
       }
     } catch (err) {
       const qrImg = document.createElement('img');
-      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&ecc=L&data=${encodeURIComponent(qrContent)}`;
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&ecc=L&data=${encodeURIComponent(qrContent)}`;
       qrImg.alt = 'Mã QR vé hẹn hò';
       qrImg.className = 'qr-clean-img';
-      qrImg.style.width = '120px';
-      qrImg.style.height = '120px';
+      qrImg.style.width = '156px';
+      qrImg.style.height = '156px';
       qrImg.style.display = 'block';
       qrImg.style.margin = 'auto';
-      qrImg.style.borderRadius = '8px';
+      qrImg.style.borderRadius = '12px';
       qrContainer.appendChild(qrImg);
     }
   }

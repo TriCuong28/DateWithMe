@@ -996,33 +996,33 @@ html, body {
 
 .ticket-footer-main {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-around;
-  padding: 6px 12px 14px;
-  gap: 16px;
-  flex-wrap: wrap;
+  justify-content: center;
+  padding: 10px 14px 18px;
+  gap: 18px;
 }
 
 .qr-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .ticket-qrcode {
   padding: 0;
   background: #ffffff;
-  border: 2.5px solid var(--pink-soft);
-  border-radius: 18px;
-  box-shadow: 0 6px 20px rgba(255, 77, 136, 0.18);
+  border: 3px solid var(--pink-soft);
+  border-radius: 22px;
+  box-shadow: 0 8px 25px rgba(255, 77, 136, 0.2);
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 136px;
-  height: 136px;
-  min-width: 136px;
-  min-height: 136px;
+  width: 176px;
+  height: 176px;
+  min-width: 176px;
+  min-height: 176px;
   box-sizing: border-box !important;
   overflow: hidden !important;
   position: relative;
@@ -1040,19 +1040,19 @@ html, body {
 .ticket-qrcode img,
 .qr-clean-img {
   display: block !important;
-  width: 120px !important;
-  height: 120px !important;
-  border-radius: 8px;
+  width: 156px !important;
+  height: 156px !important;
+  border-radius: 12px;
   margin: auto !important;
   object-fit: contain;
 }
 
 .qr-caption {
   font-family: var(--font-cute);
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 800;
   color: var(--pink-deep);
-  letter-spacing: 0.8px;
+  letter-spacing: 1px;
   margin-top: 4px;
 }
 
