@@ -1139,6 +1139,74 @@ html, body {
   box-shadow: 0 16px 36px rgba(255, 51, 119, 0.5);
 }
 
+/* REMINDER NOTE TO SEND TICKET TO HIM */
+.reminder-card {
+  background: linear-gradient(135deg, #fff2f6 0%, #ffe8f1 100%);
+  border: 2px dashed #ff80a5;
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 6px 20px rgba(255, 77, 136, 0.14);
+  margin: 6px 0 2px;
+  text-align: left;
+  transition: all 0.3s ease;
+  animation: reminderGlow 3s infinite ease-in-out;
+}
+
+@keyframes reminderGlow {
+  0%, 100% {
+    box-shadow: 0 6px 20px rgba(255, 77, 136, 0.14);
+    border-color: #ff99bb;
+  }
+  50% {
+    box-shadow: 0 8px 28px rgba(255, 51, 119, 0.28);
+    border-color: var(--pink-primary);
+  }
+}
+
+.reminder-pulse-icon {
+  font-size: 2.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+  animation: heartPulse 1.8s infinite;
+}
+
+.reminder-text-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reminder-badge {
+  font-family: var(--font-cute);
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--pink-deep);
+  background: #ffffff;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  display: inline-block;
+  align-self: flex-start;
+  border: 1.5px solid var(--pink-soft);
+  letter-spacing: 0.5px;
+}
+
+.reminder-msg {
+  font-family: var(--font-cute);
+  font-size: 0.92rem;
+  color: var(--text-main);
+  font-weight: 600;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.reminder-msg strong {
+  color: var(--pink-primary);
+  font-weight: 800;
+}
+
 .btn-replay {
   background: transparent;
   border: none;

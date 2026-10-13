@@ -12,7 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
   <!-- Ambient floating particles background -->
@@ -306,6 +306,15 @@
             <span>📸 Lưu ảnh tấm vé này về máy</span>
           </button>
 
+          <!-- Reminder Note: Remember to send to him! -->
+          <div class="reminder-card" id="reminderCard">
+            <div class="reminder-pulse-icon">💌</div>
+            <div class="reminder-text-wrap">
+              <span class="reminder-badge">LƯU Ý NHỎ NÈ 🌸</span>
+              <p class="reminder-msg">Bé nhớ lưu ảnh xong <strong>gửi ngay cho <span id="reminderSenderName">anh</span></strong> nha, để anh biết em chọn gì và chuẩn bị đón bé thật chu đáo nhé! 🥰🛵</p>
+            </div>
+          </div>
+
           <button type="button" class="btn-replay" id="replayConfettiBtn">
             <span>🎉 Bắn lại pháo hoa ăn mừng</span>
           </button>
@@ -324,6 +333,6 @@
     <p>Made with all my heart for you 💖</p>
   </footer>
 
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>

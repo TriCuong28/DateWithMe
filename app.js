@@ -242,6 +242,11 @@
     ticketSenderEl.textContent = senderNameParam ? `${senderNameParam} đẹp trai 🦸‍♂️` : 'Anh 🦸‍♂️';
   }
 
+  const reminderSenderName = document.getElementById('reminderSenderName');
+  if (reminderSenderName) {
+    reminderSenderName.textContent = senderNameParam ? `anh ${senderNameParam}` : 'anh';
+  }
+
   // --- 4. The Dodge Button ("Think Again!") Mechanics ---
   const dodgeBtn = document.getElementById('dodgeBtn');
   const dodgeBtnText = document.getElementById('dodgeBtnText');
@@ -875,7 +880,7 @@
           link.href = canvas.toDataURL('image/png');
           link.click();
           audio.playSuccessChime();
-          showToast('Đã lưu ảnh Tấm Vé Hẹn Hò về máy rồi nè! 💖');
+          showToast('Đã lưu vé về máy rồi nè! 💖 Nhớ gửi ảnh cho anh nhé! 🥰');
         }).catch((err) => {
           console.error(err);
           showToast('Ảnh đang tải, bạn có thể chụp màn hình nhé! 💖');
