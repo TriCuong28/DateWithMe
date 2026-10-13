@@ -740,15 +740,9 @@
       : currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
     const webTicketUrl = `${baseUrl}${cleanPath}?pass=${encodeURIComponent(cleanId)}`;
 
-    // Concise romantic Date Pass Ticket text (compact for large chunky QR blocks & 0.05s instant scan!)
-    const cleanPlace = places.length > 42 ? places.substring(0, 39) + '...' : places;
-
-    const qrContent = `🎟️ TẤM VÉ HẸN HÒ: ${ticketCode} 💖\n` +
-      `💕 Dành cho: ${crushVal}\n` +
-      `⏰ Thời gian: ${time}\n` +
-      `📍 Địa điểm: ${cleanPlace}\n` +
-      `✨ APPROVED WITH 100% LOVE! 💖\n` +
-      `👉 Mở vé trực tiếp: ${webTicketUrl}`;
+    // Direct web ticket URL: clean, short URL guarantees low matrix density (Version 2, 25x25 dots)
+    // Chunky large module blocks allow phone cameras to scan in milliseconds without lag!
+    const qrContent = webTicketUrl;
 
     try {
       if (typeof QRCode !== 'undefined') {
@@ -756,8 +750,8 @@
         const tempDiv = document.createElement('div');
         new QRCode(tempDiv, {
           text: qrContent,
-          width: 156,
-          height: 156,
+          width: 220,
+          height: 220,
           colorDark: '#000000',
           colorLight: '#ffffff',
           correctLevel: QRCode.CorrectLevel.L
@@ -768,11 +762,11 @@
         img.alt = 'Mã QR vé hẹn hò';
         img.src = canvas ? canvas.toDataURL('image/png') : (tempDiv.querySelector('img')?.src || '');
         img.className = 'qr-clean-img';
-        img.style.width = '156px';
-        img.style.height = '156px';
+        img.style.width = '96px';
+        img.style.height = '96px';
         img.style.display = 'block';
         img.style.margin = 'auto';
-        img.style.borderRadius = '12px';
+        img.style.borderRadius = '6px';
 
         qrContainer.appendChild(img);
       } else {
@@ -780,14 +774,14 @@
       }
     } catch (err) {
       const qrImg = document.createElement('img');
-      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&ecc=L&data=${encodeURIComponent(qrContent)}`;
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&ecc=L&data=${encodeURIComponent(qrContent)}`;
       qrImg.alt = 'Mã QR vé hẹn hò';
       qrImg.className = 'qr-clean-img';
-      qrImg.style.width = '156px';
-      qrImg.style.height = '156px';
+      qrImg.style.width = '96px';
+      qrImg.style.height = '96px';
       qrImg.style.display = 'block';
       qrImg.style.margin = 'auto';
-      qrImg.style.borderRadius = '12px';
+      qrImg.style.borderRadius = '6px';
       qrContainer.appendChild(qrImg);
     }
   }
