@@ -672,16 +672,20 @@
       const crushVal = document.getElementById('ticketCrush')?.textContent || 'Em bé đáng yêu 💕';
       const senderVal = document.getElementById('ticketSender')?.textContent || 'Anh 🦸‍♂️';
 
-      // Generate clean centered QR code containing complete Date Pass Ticket
-      generateAndRenderQrCode(ticketCode, crushVal, senderVal, finalPlaces, selectedTime, finalTreats, pickupOption);
-
-      // Transition to Ticket Screen
+      // Transition to Ticket Screen immediately so nothing can ever block it
       plannerSection.classList.remove('active');
       plannerSection.classList.add('hidden');
 
       ticketSection.classList.remove('hidden');
       ticketSection.classList.add('active');
       ticketSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Generate clean centered QR code containing complete Date Pass Ticket
+      try {
+        generateAndRenderQrCode(ticketCode, crushVal, senderVal, finalPlaces, selectedTime, finalTreats, pickupOption);
+      } catch (err) {
+        console.error('QR generation error:', err);
+      }
 
       // Trigger Celebration & Stamp Animation
       triggerConfettiBurst();
@@ -719,12 +723,17 @@
       localStorage.setItem('ticket_' + cleanId, JSON.stringify(ticketInfo));
     } catch (e) {}
 
-    // Clean, short direct web ticket URL
-    const host = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? '192.168.1.91'
-      : window.location.hostname;
-    const path = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-    const webTicketUrl = `${window.location.protocol}//${host}${port}${path}?pass=${encodeURIComponent(cleanId)}`;
+    // Clean, short direct web ticket URL (works on Vercel, GitHub Pages, or local development)
+    let baseUrl = window.location.origin;
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      const portStr = window.location.port ? `:${window.location.port}` : '';
+      baseUrl = `http://192.168.1.91${portStr}`;
+    }
+    const currentPath = window.location.pathname || '/';
+    const cleanPath = currentPath.endsWith('/')
+      ? currentPath
+      : currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+    const webTicketUrl = `${baseUrl}${cleanPath}?pass=${encodeURIComponent(cleanId)}`;
 
     // Concise romantic Date Pass Ticket text (compact for large chunky QR blocks & 0.05s instant scan!)
     const cleanPlace = places.length > 42 ? places.substring(0, 39) + '...' : places;
