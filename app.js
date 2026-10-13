@@ -617,36 +617,140 @@
     });
   });
 
-  // --- 8. Generate Date Ticket Pass ---
+  // --- 8. Codec & Helpers for Compact QR Payload (Reflects Her Exact Selections!) ---
+  const PLACE_MAP = {
+    coffee: 'Quán cà phê chill ngắm phố ☕',
+    movie: 'Rạp chiếu phim lãng mạn 🎬',
+    dinner: 'Đi ăn đồ nướng / lẩu siêu ngon 🍲',
+    arcade: 'Khu vui chơi / Gắp gấu bông & Bowling 🎡',
+    walk: 'Dạo phố hóng gió & ngắm hoàng hôn 🚶‍♀️'
+  };
+
+  const TREAT_MAP = {
+    ts: 'Trà sữa full topping 🧋',
+    kem: 'Kem ốc quế mát lạnh 🍦',
+    banh: 'Bánh ngọt xinh xắn 🍰',
+    anvat: 'Bánh tráng nướng / Ăn vặt 🍢',
+    nuocep: 'Nước ép hoa quả healthy 🍹'
+  };
+
+  const PICKUP_MAP = {
+    don: 'Anh qua đón em nha 🛵',
+    quan: 'Mình gặp nhau ở điểm hẹn nè 📍'
+  };
+
+  function decodePlaces(val) {
+    if (!val) return 'Quán cà phê chill ngắm phố ☕';
+    const parts = val.split(',').map((s) => s.trim()).filter(Boolean);
+    const decoded = parts.map((p) => {
+      if (PLACE_MAP[p]) return PLACE_MAP[p];
+      if (p.startsWith('c:')) {
+        try {
+          return `✨ ${decodeURIComponent(p.substring(2))}`;
+        } catch (e) {
+          return `✨ ${p.substring(2)}`;
+        }
+      }
+      return p;
+    });
+    return decoded.length > 0 ? decoded.join(' & ') : 'Quán cà phê chill ngắm phố ☕';
+  }
+
+  function decodeTreats(val) {
+    if (!val) return 'Trà sữa full topping 🧋';
+    const parts = val.split(',').map((s) => s.trim()).filter(Boolean);
+    const decoded = parts.map((t) => TREAT_MAP[t] || t);
+    return decoded.length > 0 ? decoded.join(', ') : 'Trà sữa full topping 🧋';
+  }
+
+  function decodeTime(val) {
+    if (!val) return 'Tối Thứ Bảy lúc 19:00';
+    if (val.includes('@')) {
+      const [p, h] = val.split('@');
+      const hourPart = h ? ` lúc ${h}` : '';
+      if (p === 'sat') return `Tối Thứ Bảy${hourPart}`;
+      if (p === 'sun') return `Chủ Nhật${hourPart}`;
+      if (p === 'tmr') return `Tối mai${hourPart}`;
+      if (p === 'today') return `Tối nay${hourPart}`;
+      if (p === 'someday') return 'Hôm nào em rảnh (báo sau) 💕';
+      return `${p}${hourPart}`;
+    }
+    if (val === 'someday') return 'Hôm nào em rảnh (báo sau) 💕';
+    return val;
+  }
+
+  function decodePickup(val) {
+    return PICKUP_MAP[val] || val || 'Anh qua đón em nha 🛵';
+  }
+
+  // --- 8a. Generate Date Ticket Pass ---
   const generateTicketBtn = document.getElementById('generateTicketBtn');
   const ticketSection = document.getElementById('ticketSection');
 
   if (generateTicketBtn) {
     generateTicketBtn.addEventListener('click', () => {
-      // Collect selected places
+      // Collect selected places and codes
       const selectedPlaces = [];
+      const placeCodes = [];
       document.querySelectorAll('.option-card input:checked').forEach((chk) => {
+        const parentCard = chk.closest('.option-card');
+        const cardVal = parentCard?.getAttribute('data-val');
         if (chk.id === 'customPlaceCheck') {
           const customVal = document.getElementById('customPlaceInput')?.value.trim();
           selectedPlaces.push(customVal ? `✨ ${customVal}` : '✨ Địa điểm bí mật');
+          if (customVal) placeCodes.push(`c:${encodeURIComponent(customVal)}`);
+          else placeCodes.push('c:secret');
         } else {
           selectedPlaces.push(chk.value);
+          if (cardVal) placeCodes.push(cardVal);
+          else placeCodes.push(chk.value);
         }
       });
       const finalPlaces = selectedPlaces.length > 0 ? selectedPlaces.join(' & ') : 'Quán cà phê chill ngắm phố ☕';
+      const finalPlaceCode = placeCodes.length > 0 ? placeCodes.join(',') : 'coffee';
 
-      // Collect selected treats
+      // Collect selected treats and codes
       const selectedTreats = [];
+      const treatCodes = [];
+      const TREAT_CODE_MAP = {
+        'Trà sữa full topping 🧋': 'ts',
+        'Kem ốc quế mát lạnh 🍦': 'kem',
+        'Bánh ngọt xinh xắn 🍰': 'banh',
+        'Bánh tráng nướng / Ăn vặt 🍢': 'anvat',
+        'Nước ép hoa quả healthy 🍹': 'nuocep'
+      };
       document.querySelectorAll('.chip-item.active').forEach((ch) => {
-        selectedTreats.push(ch.getAttribute('data-treat'));
+        const treatText = ch.getAttribute('data-treat');
+        if (treatText) {
+          selectedTreats.push(treatText);
+          treatCodes.push(TREAT_CODE_MAP[treatText] || treatText);
+        }
       });
       const finalTreats = selectedTreats.length > 0 ? selectedTreats.join(', ') : 'Trà sữa full topping 🧋';
+      const finalTreatCode = treatCodes.length > 0 ? treatCodes.join(',') : 'ts';
 
-      // Collect pickup & note
-      const pickupOption = document.querySelector('input[name="pickup"]:checked')?.value || 'Anh qua đón em';
+      // Collect time code
+      let timeCode = '';
+      const activePreset = document.querySelector('.preset-btn.active');
+      if (activePreset) {
+        if (activePreset.id === 'presetSat') timeCode = `sat@${selectedHourStr}`;
+        else if (activePreset.id === 'presetSun') timeCode = `sun@${selectedHourStr}`;
+        else if (activePreset.id === 'presetTmr') timeCode = `tmr@${selectedHourStr}`;
+        else if (activePreset.id === 'presetToday') timeCode = `today@${selectedHourStr}`;
+        else if (activePreset.id === 'presetSomeday') timeCode = 'someday';
+      }
+      if (!timeCode) {
+        timeCode = `${selectedDateStr}@${selectedHourStr}`;
+      }
+
+      // Collect pickup option & code
+      const pickupOption = document.querySelector('input[name="pickup"]:checked')?.value || 'Anh qua đón em nha';
+      const pickupCode = (pickupOption.includes('quán') || pickupOption.includes('gặp')) ? 'quan' : 'don';
+
+      // Custom Note
       const customNote = document.getElementById('customNote')?.value.trim();
 
-      // Populate Ticket fields
+      // Populate Ticket fields on screen
       document.getElementById('ticketPlace').textContent = finalPlaces;
       document.getElementById('ticketTreat').textContent = finalTreats;
       document.getElementById('ticketTime').textContent = selectedTime;
@@ -677,7 +781,7 @@
       const crushVal = document.getElementById('ticketCrush')?.textContent || 'Em bé đáng yêu 💕';
       const senderVal = document.getElementById('ticketSender')?.textContent || 'Anh 🦸‍♂️';
 
-      // Transition to Ticket Screen immediately so nothing can ever block it
+      // Transition to Ticket Screen immediately
       plannerSection.classList.remove('active');
       plannerSection.classList.add('hidden');
 
@@ -685,9 +789,24 @@
       ticketSection.classList.add('active');
       ticketSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-      // Generate clean centered QR code containing complete Date Pass Ticket
+      // Generate scannable QR code carrying her exact selections!
       try {
-        generateAndRenderQrCode(ticketCode, crushVal, senderVal, finalPlaces, selectedTime, finalTreats, pickupOption);
+        generateAndRenderQrCode(
+          ticketCode,
+          crushVal,
+          senderVal,
+          finalPlaces,
+          selectedTime,
+          finalTreats,
+          pickupOption,
+          customNote,
+          {
+            p: finalPlaceCode,
+            tr: finalTreatCode,
+            t: timeCode,
+            pk: pickupCode
+          }
+        );
       } catch (err) {
         console.error('QR generation error:', err);
       }
@@ -705,15 +824,15 @@
     });
   }
 
-  // --- 8b. Robust Clean Centered QR Code Generator ---
-  function generateAndRenderQrCode(ticketCode, crushVal, senderVal, places, time, treats, pickup) {
+  // --- 8b. Robust Clean QR Code Generator with Dynamic Choice Payload ---
+  function generateAndRenderQrCode(ticketCode, crushVal, senderVal, places, time, treats, pickup, note = '', codes = {}) {
     const qrContainer = document.getElementById('ticketQrcode');
     if (!qrContainer) return;
     qrContainer.innerHTML = '';
 
     const cleanId = ticketCode.replace('#', '');
 
-    // Save ticket data to localStorage so short URLs can retrieve full details
+    // Save ticket data to localStorage so short URLs can retrieve full details on this device
     try {
       const ticketInfo = {
         id: ticketCode,
@@ -722,7 +841,9 @@
         places: places,
         time: time,
         treats: treats,
-        pickup: pickup
+        pickup: pickup,
+        note: note || '',
+        codes: codes
       };
       localStorage.setItem('latestDateTicket', JSON.stringify(ticketInfo));
       localStorage.setItem('ticket_' + cleanId, JSON.stringify(ticketInfo));
@@ -738,10 +859,17 @@
     const cleanPath = currentPath.endsWith('/')
       ? currentPath
       : currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
-    const webTicketUrl = `${baseUrl}${cleanPath}?pass=${encodeURIComponent(cleanId)}`;
 
-    // Direct web ticket URL: clean, short URL guarantees low matrix density (Version 2, 25x25 dots)
-    // Chunky large module blocks allow phone cameras to scan in milliseconds without lag!
+    // Build URL query params with compact encoded options chosen by the girl
+    const params = new URLSearchParams();
+    params.set('pass', cleanId);
+    if (codes.p) params.set('p', codes.p);
+    if (codes.tr) params.set('tr', codes.tr);
+    if (codes.t) params.set('t', codes.t);
+    if (codes.pk) params.set('pk', codes.pk);
+    if (note) params.set('n', note);
+
+    const webTicketUrl = `${baseUrl}${cleanPath}?${params.toString()}`;
     const qrContent = webTicketUrl;
 
     try {
@@ -786,9 +914,9 @@
     }
   }
 
-  // --- 8c. Direct Ticket View from URL (When scanned by QR code) ---
+  // --- 8c. Direct Ticket View from URL (When scanned by QR code on any device) ---
   function checkDirectTicketFromUrl() {
-    if (urlParams.get('pass') || urlParams.get('view') === 'ticket') {
+    if (urlParams.get('pass') || urlParams.get('view') === 'ticket' || urlParams.get('id') || urlParams.get('p')) {
       const passId = urlParams.get('id') || urlParams.get('pass') || 'LOVE-YES';
       const cleanId = passId.replace('#', '');
 
@@ -800,11 +928,21 @@
 
       const toName = urlParams.get('to') || urlParams.get('her') || savedData?.crush || 'Em bé đáng yêu 💕';
       const fromName = urlParams.get('from') || urlParams.get('him') || savedData?.sender || 'Anh 🦸‍♂️';
-      const placeVal = urlParams.get('place') || savedData?.places || 'Quán cà phê chill ngắm phố ☕';
-      const treatVal = urlParams.get('treat') || savedData?.treats || 'Trà sữa full topping 🧋';
-      const timeVal = urlParams.get('time') || savedData?.time || 'Tối Thứ Bảy lúc 19:00';
-      const pickupVal = urlParams.get('pickup') || savedData?.pickup || 'Anh qua đón em 🛵';
-      const noteVal = urlParams.get('note') || savedData?.note || '';
+
+      // Decode exact choices from URL query params (or fallback to saved data)
+      const rawPlace = urlParams.get('p') || urlParams.get('place');
+      const placeVal = rawPlace ? decodePlaces(rawPlace) : (savedData?.places || 'Quán cà phê chill ngắm phố ☕');
+
+      const rawTreat = urlParams.get('tr') || urlParams.get('treat');
+      const treatVal = rawTreat ? decodeTreats(rawTreat) : (savedData?.treats || 'Trà sữa full topping 🧋');
+
+      const rawTime = urlParams.get('t') || urlParams.get('time');
+      const timeVal = rawTime ? decodeTime(rawTime) : (savedData?.time || 'Tối Thứ Bảy lúc 19:00');
+
+      const rawPickup = urlParams.get('pk') || urlParams.get('pickup');
+      const pickupVal = rawPickup ? decodePickup(rawPickup) : (savedData?.pickup || 'Anh qua đón em nha 🛵');
+
+      const noteVal = urlParams.get('n') || urlParams.get('note') || savedData?.note || '';
 
       const fullTicketId = passId.startsWith('#') ? passId : `#${passId}`;
       document.getElementById('ticketId').textContent = fullTicketId;
@@ -836,8 +974,14 @@
       ticketSection.classList.remove('hidden');
       ticketSection.classList.add('active');
 
-      // Generate the clean QR code
-      generateAndRenderQrCode(fullTicketId, toName, fromName, placeVal, timeVal, treatVal, pickupVal);
+      // Preserve codes when re-rendering QR code
+      const codes = {
+        p: urlParams.get('p') || savedData?.codes?.p || '',
+        tr: urlParams.get('tr') || savedData?.codes?.tr || '',
+        t: urlParams.get('t') || savedData?.codes?.t || '',
+        pk: urlParams.get('pk') || savedData?.codes?.pk || ''
+      };
+      generateAndRenderQrCode(fullTicketId, toName, fromName, placeVal, timeVal, treatVal, pickupVal, noteVal, codes);
 
       // Trigger celebration
       setTimeout(() => {
